@@ -11,10 +11,9 @@ class APIController {
         $this->view = new APIView();
     }
 
-    // /api/reviews
-    public function getAll($req, $res) {
-        $orderBy = null;
-        $orderDirection = null;
+    public function getAllReviews($req, $res) {
+        $orderBy = null; //devolverlos segun un criterio.
+        $orderDirection = null; 
         if(isset($req->query->orderBy))
             $orderBy = $req->query->orderBy;
 
@@ -48,7 +47,7 @@ class APIController {
     }
 
     // api/reviews/:id (DELETE)
-    public function delete($req, $res) {
+    public function deleteReview($req, $res) {
         $id = $req->params->id;
 
         // Verificar que la reseña exista
@@ -59,25 +58,25 @@ class APIController {
         }
 
         // Eliminar la reseña
-        $this->model->eraseReview($id);
+        $this->model->deleteReview($id);
         $this->view->response("La reseña con el id=$id se eliminó con éxito", 200);
     }
 
     // api/reviews (POST)
-    public function create($req, $res) {
+    public function createReview($req, $res) {
 
         // Validar los datos
-        if (empty($req->body->id_paciente) || empty($req->body->id_doctor) || empty($req->body->comentario)) {
+        if (empty($req->body->usuario) || empty($req->body->medico) || empty($req->body->comentario)) {
             return $this->view->response('Faltan completar datos', 400);
         }
 
         // Obtener los datos
-        $id_paciente = $req->body->id_paciente;
-        $id_doctor = $req->body->id_doctor;
+        $usuario = $req->body->usuario;
+        $medico = $req->body->medico;
         $comentario = $req->body->comentario;
 
         // Insertar la reseña
-        $id = $this->model->insertReview($id_paciente, $id_doctor, $comentario);
+        $id = $this->model->createReview($usuario, $medico, $comentario);
 
         if (!$id) {
             return $this->view->response("Error al insertar reseña", 500);
@@ -89,7 +88,7 @@ class APIController {
     }
 
     // api/reviews/:id (PUT)
-    public function update($req, $res) {
+    public function updateReview($req, $res) {
         $id = $req->params->id;
 
         // Verificar que la reseña exista
@@ -99,17 +98,17 @@ class APIController {
         }
 
         // Validar los datos
-        if (empty($req->body->id_paciente) || empty($req->body->id_doctor) || empty($req->body->comentario)) {
+        if (empty($req->body->usuario) || empty($req->body->medico) || empty($req->body->comentario)) {
             return $this->view->response('Faltan completar datos', 400);
         }
 
         // Obtener los datos
-        $id_paciente = $req->body->id_paciente;
-        $id_doctor = $req->body->id_doctor;
+        $usuario = $req->body->usuario;
+        $medico = $req->body->medico;
         $comentario = $req->body->comentario;
 
         // Actualizar la reseña
-        $this->model->updateReview($id, $id_paciente, $id_doctor, $comentario);
+        $this->model->updateReview($id, $usuario, $medico, $comentario);
 
         // Devolver la reseña modificada
         $review = $this->model->getReview($id);

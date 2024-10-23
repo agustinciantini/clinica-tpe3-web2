@@ -7,11 +7,11 @@ require_once './app/controllers/APIController.php';
 
 $router = new Router();
 
-    #Review          endpoint                          verbo                     controller            metodo
-    $router->addRoute('review'      ,            'GET',     'APIController',   'getAll');
-    $router->addRoute('review/:id'  ,            'GET',     'APIController',   'getReview'   );
-    $router->addRoute('review/:id'  ,            'DELETE',  'APIController',   'delete');
-    $router->addRoute('review/:id'  ,            'PUT',     'APIController',   'update');
-    //  $router->addRoute('reseñas'  ,                'POST',    'APIController',   'create');
+    #Review          endpoint               verbo              controller                metodo
+    $router->addRoute('reviews', 'GET','APIController', 'getAllReviews');
+    $router->addRoute('review/:id','GET', 'APIController','getReview');
+    $router->addRoute('review', 'POST',    'APIController','createReview');
+    $router->addRoute('review/:id','PUT','APIController','updateReview');
+    $router->addRoute('review/:id','DELETE','APIController','deleteReview');
 
     $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);

@@ -8,18 +8,15 @@ class ReviewModel {
        $this->db = new PDO('mysql:host=localhost;dbname=clinica;charset=utf8', 'root', '');
     }
  
-    // Obtener todas las reseñas, con opción de ordenar
+    // Obtener todas las reseñas, con opción de ordenar.
     public function getReviews($orderBy = null , $ordenDirection = ' ASC') {
         $sql = 'SELECT * FROM reseñas';
 
         if ($orderBy) {
             $sql .= ' ORDER BY ';
             switch($orderBy) {
-                case 'id_paciente':
-                    $sql .= ' id_paciente';
-                    break;
-                case 'id_doctor':
-                    $sql .= ' id_doctor';
+                case 'id':
+                    $sql .= ' id';
                     break;
             }
 
@@ -50,9 +47,9 @@ class ReviewModel {
     }
 
     // Insertar una nueva reseña
-    public function insertReview($id_paciente, $id_doctor, $comentario) {
-        $query = $this->db->prepare('INSERT INTO reseñas(id_paciente, id_doctor, comentario) VALUES (?, ?, ?)');
-        $query->execute([$id_paciente, $id_doctor, $comentario]);
+    public function createReview($usuario, $medico, $comentario) {
+        $query = $this->db->prepare('INSERT INTO reseñas(usuario, medico, comentario) VALUES (?, ?, ?)');
+        $query->execute([$usuario, $medico, $comentario]);
     
         // Retornar el ID de la última reseña insertada
         $id = $this->db->lastInsertId();
@@ -61,14 +58,14 @@ class ReviewModel {
     }
 
     // Eliminar una reseña
-    public function eraseReview($id) {
+    public function deleteReview($id) {
         $query = $this->db->prepare('DELETE FROM reseñas WHERE id = ?');
         $query->execute([$id]);
     }
 
     // Actualizar una reseña
-    public function updateReview($id, $id_paciente, $id_doctor, $comentario) {
-        $query = $this->db->prepare('UPDATE reseñas SET id_paciente = ?, id_doctor = ?, comentario = ? WHERE id = ?');
-        $query->execute([$id_paciente, $id_doctor, $comentario, $id]);
+    public function updateReview($id, $usuario, $medico, $comentario) {
+        $query = $this->db->prepare('UPDATE reseñas SET usuario = ?, medico = ?, comentario = ? WHERE id = ?');
+        $query->execute([$usuario, $medico, $comentario, $id]);
     }
 }
