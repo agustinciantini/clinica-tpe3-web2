@@ -1,4 +1,6 @@
 <?php
+require_once './app/models/reviewModel.php';
+
 class reviewApiController {
     private $model;
     private $view;
@@ -8,104 +10,100 @@ class reviewApiController {
         $this->view = new JSONView();
     }
 
-    // /api/tareas
+    // /api/reviews
     public function getAll($req, $res) {
-        $filtrarFinalizadas = null;
-        
-        if(isset($req->query->finalizadas)) {
-            $filtrarFinalizadas = $req->query->finalizadas;
-        }
-        
         $orderBy = false;
         if(isset($req->query->orderBy))
             $orderBy = $req->query->orderBy;
 
-        $reviews = $this->model->getReviews($filtrarFinalizadas, $orderBy);
+        // Obtener todas las reseñas
+        $reviews = $this->model->getReviews($orderBy);
         
-        // mando las tareas a la vista
+        // Devolver las reseñas a la vista
         return $this->view->response($reviews);
     }
 
-    // /api/tareas/:id
+    // /api/reviews/:id
     public function get($req, $res) {
-        // obtengo el id de la tarea desde la ruta
+        // Obtener el id de la reseña desde la ruta
         $id = $req->params->id;
 
-        // obtengo la tarea de la DB
+        // Obtener la reseña de la DB
         $review = $this->model->getReview($id);
 
         if(!$review) {
-            return $this->view->response("La review con el id=$id no existe", 404);
+            return $this->view->response("La reseña con el id=$id no existe", 404);
         }
 
-        // mando la tarea a la vista
+        // Devolver la reseña a la vista
         return $this->view->response($review);
     }
 
-    // api/tareas/:id (DELETE)
+    // api/reviews/:id (DELETE)
     public function delete($req, $res) {
         $id = $req->params->id;
 
+        // Verificar que la reseña exista
         $review = $this->model->getReview($id);
 
         if (!$review) {
-            return $this->view->response("La review con el id=$id no existe", 404);
+            return $this->view->response("La reseña con el id=$id no existe", 404);
         }
 
+        // Eliminar la reseña
         $this->model->eraseReview($id);
-        $this->view->response("La review con el id=$id se eliminó con éxito");
+        $this->view->response("La reseña con el id=$id se eliminó con éxito");
     }
 
-    // api/tareas (POST)
+    // api/reviews (POST)
     public function create($req, $res) {
 
-        // valido los datos
-        if (empty($req->body->titulo) || empty($req->body->prioridad)) {
+        // Validar los datos
+        if (empty($req->body->id_paciente) || empty($req->body->id_doctor) || empty($req->body->comentario)) {
             return $this->view->response('Faltan completar datos', 400);
         }
 
-        // obtengo los datos
-        $titulo = $req->body->titulo;       
-        $descripcion = $req->body->descripcion;       
-        $prioridad = $req->body->prioridad;       
+        // Obtener los datos
+        $id_paciente = $req->body->id_paciente;
+        $id_doctor = $req->body->id_doctor;
+        $comentario = $req->body->comentario;
 
-        // inserto los datos
-        $id = $this->model->insertReview($titulo, $descripcion, $prioridad);
+        // Insertar la reseña
+        $id = $this->model->insertReview($id_paciente, $id_doctor, $comentario);
 
         if (!$id) {
-            return $this->view->response("Error al insertar review", 500);
+            return $this->view->response("Error al insertar reseña", 500);
         }
 
-        // buena práctica es devolver el recurso insertado
+        // Devolver la reseña insertada
         $review = $this->model->getReview($id);
         return $this->view->response($review, 201);
     }
 
-    // api/tareas/:id (PUT)
+    // api/reviews/:id (PUT)
     public function update($req, $res) {
         $id = $req->params->id;
 
-        // verifico que exista
+        // Verificar que la reseña exista
         $review = $this->model->getReview($id);
         if (!$review) {
-            return $this->view->response("La review con el id=$id no existe", 404);
+            return $this->view->response("La reseña con el id=$id no existe", 404);
         }
 
-         // valido los datos
-         if (empty($req->body->titulo) || empty($req->body->prioridad) || empty($req->body->finalizada)) {
+        // Validar los datos
+        if (empty($req->body->id_paciente) || empty($req->body->id_doctor) || empty($req->body->comentario)) {
             return $this->view->response('Faltan completar datos', 400);
         }
 
-        // obtengo los datos
-        $titulo = $req->body->titulo;       
-        $descripcion = $req->body->descripcion;       
-        $prioridad = $req->body->prioridad;
-        $finalizada = $req->body->finalizada;
+        // Obtener los datos
+        $id_paciente = $req->body->id_paciente;
+        $id_doctor = $req->body->id_doctor;
+        $comentario = $req->body->comentario;
 
-        // actualiza la tarea
-        $this->model->updateReview($id, $titulo, $descripcion, $prioridad, $finalizada);
+        // Actualizar la reseña
+        $this->model->updateReview($id, $id_paciente, $id_doctor, $comentario);
 
-        // obtengo la tarea modificada y la devuelvo en la respuesta
+        // Devolver la reseña modificada
         $review = $this->model->getReview($id);
         $this->view->response($review, 200);
     }

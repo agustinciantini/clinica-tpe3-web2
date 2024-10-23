@@ -1,10 +1,10 @@
 <?php
 
-class UserModel {
+class userModel {
     private $db;
 
     public function __construct() {
-       $this->db = new PDO('mysql:host=localhost;dbname=db_tareas;charset=utf8', 'root', '');
+       $this->db = new PDO('mysql:host=localhost;dbname=clinica;charset=utf8', 'root', '');
     }
  
     public function getUserByEmail($email) {    

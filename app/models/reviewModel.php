@@ -4,70 +4,65 @@ class ReviewModel {
     private $db;
 
     public function __construct() {
+       // Conexión a la base de datos
        $this->db = new PDO('mysql:host=localhost;dbname=clinica;charset=utf8', 'root', '');
     }
  
-    public function getTasks($filtrarFinalizadas = null, $orderBy = false) {
-        $sql = 'SELECT * FROM tareas';
+    // Obtener todas las reseñas, con opción de ordenar
+    public function getReviews($orderBy = false) {
+        $sql = 'SELECT * FROM reseñas';
 
-        if($filtrarFinalizadas != null) {
-            if($filtrarFinalizadas == 'true')
-                $sql .= ' WHERE finalizada = 1';
-            else
-                $sql .= ' WHERE finalizada = 0';
-        }
-
-        if($orderBy) {
+        if ($orderBy) {
             switch($orderBy) {
-                case 'titulo':
-                    $sql .= ' ORDER BY titulo';
+                case 'id_paciente':
+                    $sql .= ' ORDER BY id_paciente';
                     break;
-                case 'prioridad':
-                    $sql .= ' ORDER BY prioridad';
+                case 'id_doctor':
+                    $sql .= ' ORDER BY id_doctor';
                     break;
             }
         }
 
-        // 2. Ejecuto la consulta
+        // Ejecutar la consulta
         $query = $this->db->prepare($sql);
         $query->execute();
     
-        // 3. Obtengo los datos en un arreglo de objetos
-        $tasks = $query->fetchAll(PDO::FETCH_OBJ); 
+        // Obtener los datos en un arreglo de objetos
+        $reviews = $query->fetchAll(PDO::FETCH_OBJ);
     
-        return $tasks;
+        return $reviews;
     }
- 
-    public function getReview($id) {    
-        $query = $this->db->prepare('SELECT * FROM tareas WHERE id = ?');
-        $query->execute([$id]);   
+
+    // Obtener una reseña específica por su ID
+    public function getReview($id) {
+        $query = $this->db->prepare('SELECT * FROM reseñas WHERE id = ?');
+        $query->execute([$id]);
     
-        $task = $query->fetch(PDO::FETCH_OBJ);
+        $review = $query->fetch(PDO::FETCH_OBJ);
     
-        return $task;
+        return $review;
     }
- 
-    public function insertTask($title, $description, $priority, $finished = false) { 
-        $query = $this->db->prepare('INSERT INTO tareas(titulo, descripcion, prioridad, finalizada) VALUES (?, ?, ?, ?)');
-        $query->execute([$title, $description, $priority, $finished]);
+
+    // Insertar una nueva reseña
+    public function insertReview($id_paciente, $id_doctor, $comentario) {
+        $query = $this->db->prepare('INSERT INTO reseñas(id_paciente, id_doctor, comentario) VALUES (?, ?, ?)');
+        $query->execute([$id_paciente, $id_doctor, $comentario]);
     
+        // Retornar el ID de la última reseña insertada
         $id = $this->db->lastInsertId();
     
         return $id;
     }
- 
-    public function eraseTask($id) {
-        $query = $this->db->prepare('DELETE FROM tareas WHERE id = ?');
+
+    // Eliminar una reseña
+    public function eraseReview($id) {
+        $query = $this->db->prepare('DELETE FROM reseñas WHERE id = ?');
         $query->execute([$id]);
     }
 
-    public function setFinalize($id, $finalizada) {        
-        $query = $this->db->prepare('UPDATE tareas SET finalizada = ? WHERE id = ?');
-        $query->execute([$finalizada, $id,]);
-    }
-
-    function updateTask($id, $titulo, $descripcion, $prioridad, $finalizada) {    
-        $query = $this->db->prepare('UPDATE tareas SET titulo = ?, descripcion = ?, prioridad = ?, finalizada = ? WHERE id = ?');
-        $query->execute([$titulo, $descripcion, $prioridad, $finalizada, $id]);
+    // Actualizar una reseña
+    public function updateReview($id, $id_paciente, $id_doctor, $comentario) {
+        $query = $this->db->prepare('UPDATE reseñas SET id_paciente = ?, id_doctor = ?, comentario = ? WHERE id = ?');
+        $query->execute([$id_paciente, $id_doctor, $comentario, $id]);
     }
 }
