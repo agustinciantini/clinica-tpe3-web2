@@ -9,20 +9,26 @@ class ReviewModel {
     }
  
     // Obtener todas las reseñas, con opción de ordenar
-    public function getReviews($orderBy = false) {
+    public function getReviews($orderBy = null , $ordenDirection = ' ASC') {
         $sql = 'SELECT * FROM reseñas';
 
         if ($orderBy) {
+            $sql .= ' ORDER BY ';
             switch($orderBy) {
                 case 'id_paciente':
-                    $sql .= ' ORDER BY id_paciente';
+                    $sql .= ' id_paciente';
                     break;
                 case 'id_doctor':
-                    $sql .= ' ORDER BY id_doctor';
+                    $sql .= ' id_doctor';
                     break;
             }
-        }
 
+            if($ordenDirection === 'DESC'){
+                $sql .= ' DESC';
+            }else{
+                $sql .= ' ASC';
+            }
+        }
         // Ejecutar la consulta
         $query = $this->db->prepare($sql);
         $query->execute();

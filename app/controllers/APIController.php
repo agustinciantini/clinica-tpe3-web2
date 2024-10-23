@@ -1,30 +1,38 @@
 <?php
 require_once './app/models/reviewModel.php';
+require_once './app/views/APIView.php';
 
-class reviewApiController {
+class APIController {
     private $model;
     private $view;
 
     public function __construct() {
         $this->model = new reviewModel();
-        $this->view = new JSONView();
+        $this->view = new APIView();
     }
 
     // /api/reviews
     public function getAll($req, $res) {
-        $orderBy = false;
+        $orderBy = null;
+        $orderDirection = null;
         if(isset($req->query->orderBy))
             $orderBy = $req->query->orderBy;
 
+        if(isset($req->query->orderDirection)){
+            $orderDirection  = $req->query->orderDirection;
+        }
+        
+        $reviews = $this->model->getReviews( $orderBy , $orderDirection);
+
         // Obtener todas las reseñas
-        $reviews = $this->model->getReviews($orderBy);
+        
         
         // Devolver las reseñas a la vista
-        return $this->view->response($reviews);
+        return $this->view->response($reviews , 200);
     }
 
     // /api/reviews/:id
-    public function get($req, $res) {
+    public function getReview($req, $res) {
         // Obtener el id de la reseña desde la ruta
         $id = $req->params->id;
 
@@ -36,7 +44,7 @@ class reviewApiController {
         }
 
         // Devolver la reseña a la vista
-        return $this->view->response($review);
+        return $this->view->response($review , 200 );
     }
 
     // api/reviews/:id (DELETE)
@@ -52,7 +60,7 @@ class reviewApiController {
 
         // Eliminar la reseña
         $this->model->eraseReview($id);
-        $this->view->response("La reseña con el id=$id se eliminó con éxito");
+        $this->view->response("La reseña con el id=$id se eliminó con éxito", 200);
     }
 
     // api/reviews (POST)
