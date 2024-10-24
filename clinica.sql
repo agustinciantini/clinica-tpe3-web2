@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-10-2024 a las 19:11:11
+-- Tiempo de generación: 24-10-2024 a las 19:25:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,19 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `clinica`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `doctores`
---
-
-CREATE TABLE `doctores` (
-  `id` int(10) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `apellido` varchar(100) NOT NULL,
-  `especialidad` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -70,10 +57,20 @@ INSERT INTO `paciente` (`id`, `nombre`, `apellido`, `dni`, `edad`, `enfermedad`,
 
 CREATE TABLE `reseñas` (
   `id` int(10) NOT NULL,
-  `id_paciente` int(100) NOT NULL,
-  `id_doctor` int(100) NOT NULL,
+  `usuario` varchar(200) NOT NULL,
+  `medico` varchar(200) NOT NULL,
   `comentario` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `reseñas`
+--
+
+INSERT INTO `reseñas` (`id`, `usuario`, `medico`, `comentario`) VALUES
+(2, 'Agustin', 'Fausto', 'uheufhencuwebihninevcwunh'),
+(3, 'QQQ', 'FauGGGGGGGGGsto', 'uUUUUUUUUUUUevcwunh'),
+(4, 'jsjdxjdja', ' xass', 'ssss'),
+(5, 'HOLA', 'YUUU', 'uUUUUUUUUUUUevcwunh');
 
 -- --------------------------------------------------------
 
@@ -121,12 +118,6 @@ INSERT INTO `usuario` (`id`, `email`, `password`) VALUES
 --
 
 --
--- Indices de la tabla `doctores`
---
-ALTER TABLE `doctores`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `paciente`
 --
 ALTER TABLE `paciente`
@@ -156,12 +147,6 @@ ALTER TABLE `usuario`
 --
 
 --
--- AUTO_INCREMENT de la tabla `doctores`
---
-ALTER TABLE `doctores`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `paciente`
 --
 ALTER TABLE `paciente`
@@ -171,7 +156,7 @@ ALTER TABLE `paciente`
 -- AUTO_INCREMENT de la tabla `reseñas`
 --
 ALTER TABLE `reseñas`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `turno`
