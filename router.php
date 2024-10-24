@@ -3,8 +3,6 @@ require_once  './app/libs/router.php';
 require_once './app/libs/request.php';
 require_once './app/controllers/APIController.php';
 
-
-
 $router = new Router();
 
     #Review          endpoint               verbo              controller                metodo

@@ -62,11 +62,9 @@ class Router {
         foreach ($this->middlewares as $middleware) {
             $middleware->run($this->request, $this->response);
         }
-        //$ruta->url //no compila!
         foreach ($this->routeTable as $route) {
             if($route->match($url, $verb)){
-                //TODO: ejecutar el controller//ejecutar el controller
-                // pasarle los parametros
+
                 $route->run($this->request, $this->response);
                 return;
             }
