@@ -9,9 +9,28 @@ class ReviewModel {
     }
  
     // Obtener todas las reseñas, con opción de ordenar.
-    public function getReviews($orderBy = null , $ordenDirection = ' ASC') {
+    public function getReviews($orderBy = null , $ordenDirection = ' ASC', $filter_medico=null, $filter_usuario=null, $filter_comentario=null) {
         $sql = 'SELECT * FROM reseñas';
+        $filtros=[];//Agrego la consulta sql de los filtros SETEADOS.
+        $params = [];//Agrego los valores de los filtros SETEADOS.
 
+        if($filter_medico!=null){
+            array_push($filtros,' medico = ? ');
+            array_push($params, $filter_medico);
+        }
+        if($filter_usuario!=null){
+            array_push($filtros,' usuario = ? ');
+            array_push($params, $filter_usuario);
+        }
+        if($filter_comentario!=null){
+            array_push($filtros,' comentario = ? ');
+            array_push($params, $filter_comentario);
+        }
+        if(!empty($filtros)){
+            $sql .= ' WHERE ';
+            $sql .= implode(' AND ', $filtros);//Agrego filtros a la consulta.
+            //$filtros=   medico = ? AND usuario = ? AND comentario = ?
+        }
         if ($orderBy) {
             $sql .= ' ORDER BY ';
             switch($orderBy) {
@@ -28,7 +47,6 @@ class ReviewModel {
                      $sql .= ' comentario';
                     break;
             }
-
             if($ordenDirection === 'DESC'){
                 $sql .= ' DESC';
             }else{
@@ -36,13 +54,13 @@ class ReviewModel {
             }
         }
         $query = $this->db->prepare($sql);
-        $query->execute();
-    
+            $query->execute($params);    
         // Obtener los datos en un arreglo de objetos.
         $reviews = $query->fetchAll(PDO::FETCH_OBJ);
     
         return $reviews;
     }
+
 
     // Obtener una reseña específica por su ID.
     public function getReview($id) {

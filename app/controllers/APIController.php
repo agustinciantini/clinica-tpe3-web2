@@ -13,40 +13,50 @@ class APIController {
 
     public function getAllReviews($req, $res) {
         $orderBy = null; //devolverlos segun un criterio.
-        $orderDirection = null; 
-        if(isset($req->query->orderBy))
-            $orderBy = $req->query->orderBy;
+        $orderDirection = null; //devolverlos ordenados.
+        $filter_medico = null;
+        $filter_usuario = null;
+        $filter_comentario = null;
 
+        if(isset($req->query->orderBy)){
+            $orderBy = $req->query->orderBy;
+        }
         if(isset($req->query->orderDirection)){
             $orderDirection  = $req->query->orderDirection;
         }
+        if(isset($req->query->filter_medico)){
+            $filter_medico  = $req->query->filter_medico;
+        }
+        if(isset($req->query->filter_usuario)){
+            $filter_usuario  = $req->query->filter_usuario;
+        }
+        if(isset($req->query->filter_comentario)){
+            $filter_comentario  = $req->query->filter_comentario;
+        }
+        $reviews = $this->model->getReviews( $orderBy , $orderDirection, $filter_medico, $filter_usuario, $filter_comentario);
         
-        $reviews = $this->model->getReviews( $orderBy , $orderDirection);
-
-        // Devolver las reseñas a la vista.
-        return $this->view->response($reviews , 200);
+        if(!$reviews){ // Verificar que la reseña exista.
+            return $this->view->response('No hay reseñas', 404);
+        }
+        return $this->view->response($reviews , 200);// Devolver las reseñas a la vista.
     }
 
     public function getReview($req, $res) {
-        // Obtener el id de la reseña desde la ruta.
-        $id = $req->params->id;
+        $id = $req->params->id; // Obtener la reseña segun id.
 
-        // Obtener la reseña de la database.
-        $review = $this->model->getReview($id);
+        $review = $this->model->getReview($id); // Verificar que la reseña exista.
 
         if(!$review) {
             return $this->view->response("La reseña con el id=$id no existe", 404);
         }
-
-        // Devolver la reseña a la vista.
-        return $this->view->response($review , 200 );
+        
+        return $this->view->response($review , 200); // Devolver la reseña a la vista.
     }
 
     public function deleteReview($req, $res) {
-        $id = $req->params->id;
-
-        // Verificar que la reseña exista.
-        $review = $this->model->getReview($id);
+        $id = $req->params->id; //Eliminar reseña según id.
+        
+        $review = $this->model->getReview($id);  // Verificar que la reseña exista.
 
         if (!$review) {
             return $this->view->response("La reseña con el id=$id no existe", 404);
@@ -54,11 +64,10 @@ class APIController {
 
         // Eliminar la reseña.
         $this->model->deleteReview($id);
-        $this->view->response("La reseña con el id=$id se eliminó con éxito", 200);
+        return $this->view->response("La reseña con el id=$id se eliminó con éxito", 200);
     }
 
     public function createReview($req, $res) {
-
         // Validar los datos.
         if (empty($req->body->usuario) || empty($req->body->medico) || empty($req->body->comentario)) {
             return $this->view->response('Faltan completar datos', 400);
@@ -82,7 +91,7 @@ class APIController {
     }
 
     public function updateReview($req, $res) {
-        $id = $req->params->id;
+        $id = $req->params->id; //Editar una reseña segun id.
 
         // Verificar que la reseña exista.
         $review = $this->model->getReview($id);
