@@ -17,6 +17,8 @@ class APIController {
         $filter_medico = null;
         $filter_usuario = null;
         $filter_comentario = null;
+        $page=null;
+        $limit=null;
 
         if(isset($req->query->orderBy)){
             $orderBy = $req->query->orderBy;
@@ -33,7 +35,15 @@ class APIController {
         if(isset($req->query->filter_comentario)){
             $filter_comentario  = $req->query->filter_comentario;
         }
-        $reviews = $this->model->getReviews( $orderBy , $orderDirection, $filter_medico, $filter_usuario, $filter_comentario);
+        //Paginacion
+        if(isset($req->query->page) && is_numeric($req->query->page)){
+            $page = $req->query->page;
+         }
+        if(isset($req->query->limit) && is_numeric($req->query->limit)){
+            $limit = $req->query->limit;
+        }
+        
+        $reviews = $this->model->getReviews( $orderBy , $orderDirection, $filter_medico, $filter_usuario, $filter_comentario, $page, $limit);
         
         if(!$reviews){ // Verificar que la reseña exista.
             return $this->view->response('No hay reseñas', 404);

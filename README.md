@@ -46,4 +46,9 @@ Filtrar por campos, ordenar por campo y en una direccion.
 
  /api/reviews?filter_medico=maria&filter_usuario=celeste&filter_comentario=excelente&orderBy=id&orderDirection=DESC
 
+ ## Paginación
+ Tanto la pagina como el limit de las reseñas a mostrar se pasan por parámetros.
+ Si ingresa un limite=0, no hay reseñas.
+ Si ingresa una valor de pagina mayor a la cantidad de reseñas, no hay reseñas.
+/api/reviews?page=2&limit=6
 

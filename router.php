@@ -11,5 +11,5 @@ $router = new Router();
     $router->addRoute('review', 'POST',    'APIController','createReview');
     $router->addRoute('review/:id','PUT','APIController','updateReview');
     $router->addRoute('review/:id','DELETE','APIController','deleteReview');
-
+    //reviews?pag=1
     $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);
