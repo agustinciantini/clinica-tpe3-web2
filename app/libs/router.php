@@ -2,6 +2,7 @@
 
 require_once './app/libs/request.php';
 require_once './app/libs/response.php';
+require_once './app/controllers/user.api.controller.php';
 
 class Route {
     private $url;

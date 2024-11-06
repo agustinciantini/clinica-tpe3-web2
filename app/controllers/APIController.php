@@ -10,7 +10,7 @@ class APIController {
         $this->model = new reviewModel();
         $this->view = new APIView();
     }
-
+    
     public function getAllReviews($req, $res) {
         $orderBy = null; //devolverlos segun un criterio.
         $orderDirection = null; //devolverlos ordenados.
@@ -19,6 +19,10 @@ class APIController {
         $filter_comentario = null;
         $page=null;
         $limit=null;
+
+        if(!$res->user) {
+            return $this->view->response("No estás autorizado, inicia sesión porfavor.", 401);
+        }
 
         if(isset($req->query->orderBy)){
             $orderBy = $req->query->orderBy;
@@ -46,7 +50,7 @@ class APIController {
         $reviews = $this->model->getReviews( $orderBy , $orderDirection, $filter_medico, $filter_usuario, $filter_comentario, $page, $limit);
         
         if(!$reviews){ // Verificar que la reseña exista.
-            return $this->view->response('No hay reseñas', 404);
+            return $this->view->response('No hay reseñas disponibles.', 404);
         }
         return $this->view->response($reviews , 200);// Devolver las reseñas a la vista.
     }
@@ -57,7 +61,7 @@ class APIController {
         $review = $this->model->getReview($id); // Verificar que la reseña exista.
 
         if(!$review) {
-            return $this->view->response("La reseña con el id=$id no existe", 404);
+            return $this->view->response("La reseña con el id=$id no existe.", 404);
         }
         
         return $this->view->response($review , 200); // Devolver la reseña a la vista.
@@ -69,18 +73,18 @@ class APIController {
         $review = $this->model->getReview($id);  // Verificar que la reseña exista.
 
         if (!$review) {
-            return $this->view->response("La reseña con el id=$id no existe", 404);
+            return $this->view->response("La reseña con el id=$id no existe.", 404);
         }
 
         // Eliminar la reseña.
         $this->model->deleteReview($id);
-        return $this->view->response("La reseña con el id=$id se eliminó con éxito", 200);
+        return $this->view->response("La reseña con el id=$id se eliminó con éxito.", 200);
     }
 
     public function createReview($req, $res) {
         // Validar los datos.
         if (empty($req->body->usuario) || empty($req->body->medico) || empty($req->body->comentario)) {
-            return $this->view->response('Faltan completar datos', 400);
+            return $this->view->response('Faltan completar datos.', 400);
         }
 
         // Obtener los datos.
@@ -92,7 +96,7 @@ class APIController {
         $id = $this->model->createReview($usuario, $medico, $comentario);
 
         if (!$id) {
-            return $this->view->response("Error al insertar reseña", 500);
+            return $this->view->response("Error al insertar reseña.", 500);
         }
 
         // Devolver la reseña insertada.
@@ -106,12 +110,12 @@ class APIController {
         // Verificar que la reseña exista.
         $review = $this->model->getReview($id);
         if (!$review) {
-            return $this->view->response("La reseña con el id=$id no existe", 404);
+            return $this->view->response("La reseña con el id=$id no existe.", 404);
         }
 
         // Validar los datos.
         if (empty($req->body->usuario) || empty($req->body->medico) || empty($req->body->comentario)) {
-            return $this->view->response('Faltan completar datos', 400);
+            return $this->view->response('Faltan completar datos.', 400);
         }
 
         // Obtener los datos.
